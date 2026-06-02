@@ -52,6 +52,21 @@ TEAL    = (0,   160, 140)
 SILVER  = (200, 200, 215)
 DARK_P  = (60,    0,  90)
 
+import os
+
+def load_high_score():
+    if os.path.exists("highscore.txt"):
+        with open("highscore.txt", "r") as f:
+            try:
+                return int(f.read())
+            except ValueError:
+                return 0
+    return 0
+
+def save_high_score(score):
+    with open("highscore.txt", "w") as f:
+        f.write(str(score))
+
 # ─── Fonts ────────────────────────────────────────────────────────────────────
 try:
     font_big   = pygame.font.SysFont("couriernew", 52, bold=True)
@@ -1139,7 +1154,7 @@ def game():
 #  ENTRY POINT
 # ═══════════════════════════════════════════════════════════════════════════════
 def main():
-    best  = 0
+    best = load_high_score()
     state = "menu"
     frame = 0
 
@@ -1158,9 +1173,12 @@ def main():
                         state = "play"
             clock.tick(FPS)
 
+        
+
         elif state == "play":
             result, score, coins = game()
             best  = max(best, score)
+            save_high_score(best)
             if result == "quit":
                 pygame.quit(); sys.exit()
             state      = "over"
